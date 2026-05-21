@@ -142,9 +142,15 @@
       inset: 0;
       width: 38%;
       background: linear-gradient(90deg, transparent, rgba(29, 78, 216, .08), transparent);
+      opacity: 0;
       transform: translateX(-120%);
-      animation: sheen 2.8s ease-in-out infinite;
       pointer-events: none;
+      transition: opacity .2s ease;
+    }
+
+    .ticker-card.is-refreshing::before {
+      opacity: 1;
+      animation: sheen 1.2s ease-in-out infinite;
     }
 
     .ticker-main {
@@ -700,6 +706,7 @@
     const MIN_LOADING_MS = 1200;
     const REQUEST_TIMEOUT_MS = 9000;
     const AUTO_REFRESH_MS = 10000;
+    const REFRESH_INDICATOR_MS = 900;
     let liveSocket = null;
     let previousPrice = null;
     let hasTickerData = false;
@@ -1131,6 +1138,7 @@
       const showLoading = Boolean(options.showLoading);
       const keepMinimumDelay = options.keepMinimumDelay !== false;
       const hasRenderedData = els.totalLevels.textContent !== '-';
+      const showRefreshIndicator = !showLoading && hasRenderedData;
 
       if (isRefreshing) return;
       isRefreshing = true;
@@ -1138,13 +1146,19 @@
       if (showLoading) {
         clearError();
         setLoading(true);
+      } else if (showRefreshIndicator) {
+        els.tickerCard.classList.add('is-refreshing');
       }
 
       try {
         const [payload, tickerPayload] = await Promise.all([
           fetchOrderBook(),
           fetchTicker(),
-          showLoading && keepMinimumDelay ? sleep(MIN_LOADING_MS) : Promise.resolve()
+          showLoading && keepMinimumDelay
+            ? sleep(MIN_LOADING_MS)
+            : showRefreshIndicator
+              ? sleep(REFRESH_INDICATOR_MS)
+              : Promise.resolve()
         ]);
         const market = render(payload);
         renderTicker(tickerPayload, market);
@@ -1155,6 +1169,7 @@
         }
       } finally {
         if (showLoading) setLoading(false);
+        els.tickerCard.classList.remove('is-refreshing');
         isRefreshing = false;
       }
     }
