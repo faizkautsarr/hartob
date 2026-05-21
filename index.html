@@ -116,6 +116,167 @@
       white-space: normal;
     }
 
+    .ticker-card {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr);
+      gap: 18px;
+      align-items: stretch;
+      border: 1px solid rgba(29, 78, 216, .18);
+      border-radius: 8px;
+      background:
+        linear-gradient(120deg, rgba(255, 255, 255, .94), rgba(247, 249, 255, .98)),
+        #fff;
+      box-shadow: 0 18px 45px rgba(23, 32, 42, .08);
+      padding: 18px;
+      margin-bottom: 18px;
+      animation: cardIn .45s ease both;
+    }
+
+    .ticker-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 38%;
+      background: linear-gradient(90deg, transparent, rgba(29, 78, 216, .08), transparent);
+      transform: translateX(-120%);
+      animation: sheen 2.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .ticker-main {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 172px;
+    }
+
+    .ticker-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .current-price {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0 8px;
+    }
+
+    .current-price strong {
+      display: block;
+      font-size: clamp(48px, 8vw, 92px);
+      line-height: .94;
+      letter-spacing: 0;
+      color: var(--blue);
+      text-shadow: 0 10px 28px rgba(29, 78, 216, .18);
+      transition: color .25s ease, transform .25s ease;
+    }
+
+    .current-price span {
+      color: var(--muted);
+      font-size: clamp(18px, 2vw, 24px);
+      font-weight: 800;
+    }
+
+    .price-up strong { color: var(--bid); }
+    .price-down strong { color: var(--ask); }
+
+    .ticker-card.is-updating .current-price strong {
+      animation: pricePulse .72s ease;
+    }
+
+    .ticker-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ticker-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      padding: 6px 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .ticker-pill strong {
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .ticker-pill.buy strong { color: var(--bid); }
+    .ticker-pill.sell strong { color: var(--ask); }
+
+    .ticker-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .ticker-stat {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .82);
+      padding: 12px;
+      min-height: 78px;
+    }
+
+    .ticker-stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .ticker-stat strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    .market-bars {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: end;
+      gap: 5px;
+      height: 36px;
+      padding: 6px 0 0;
+    }
+
+    .market-bars i {
+      display: block;
+      width: 100%;
+      border-radius: 999px 999px 4px 4px;
+      background: linear-gradient(180deg, var(--blue), #60a5fa);
+      opacity: .85;
+      animation: barFloat 1.5s ease-in-out infinite;
+    }
+
+    .market-bars i:nth-child(1) { height: 42%; animation-delay: 0s; }
+    .market-bars i:nth-child(2) { height: 68%; animation-delay: .12s; }
+    .market-bars i:nth-child(3) { height: 50%; animation-delay: .24s; }
+    .market-bars i:nth-child(4) { height: 88%; animation-delay: .36s; }
+    .market-bars i:nth-child(5) { height: 62%; animation-delay: .48s; }
+    .market-bars i:nth-child(6) { height: 76%; animation-delay: .6s; }
+
     .summary {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -352,11 +513,40 @@
       to { transform: rotate(360deg); }
     }
 
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes sheen {
+      0%, 48% { transform: translateX(-120%); }
+      72%, 100% { transform: translateX(280%); }
+    }
+
+    @keyframes pricePulse {
+      0% { transform: scale(1); }
+      38% { transform: scale(1.045); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes barFloat {
+      0%, 100% { transform: scaleY(.72); }
+      50% { transform: scaleY(1); }
+    }
+
     @media (max-width: 1260px) {
       .summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
 
     @media (max-width: 1080px) {
+      .ticker-card { grid-template-columns: 1fr; }
       .grid { grid-template-columns: 1fr; }
       .table-wrap { max-height: none; }
     }
@@ -372,6 +562,10 @@
       .summary { grid-template-columns: 1fr; }
       .metric { min-height: auto; }
       .source { display: block; }
+      .ticker-card { padding: 14px; }
+      .ticker-main { min-height: 150px; }
+      .ticker-grid { grid-template-columns: 1fr; }
+      .market-bars { grid-column: auto; }
       th, td { padding: 8px 10px; }
     }
   </style>
@@ -381,7 +575,7 @@
     <div class="loading-box">
       <div class="spinner" aria-hidden="true"></div>
       <strong>Memuat order book live</strong>
-      <span>Mengambil data terbaru dari API Indodax...</span>
+      <span>Mengambil order book dan harga terbaru dari Indodax...</span>
     </div>
   </div>
 
@@ -400,6 +594,49 @@
     <section class="source" aria-label="Sumber data">
       <span id="sourceMode">Sumber data live</span>
       <code id="sourceUrl">https://indodax.com/api/orderbook/hartidr</code>
+    </section>
+
+    <section id="tickerCard" class="ticker-card" aria-label="Harga sekarang HART/IDR">
+      <div class="ticker-main">
+        <div>
+          <div class="ticker-label">Harga Sekarang</div>
+          <div id="currentPriceWrap" class="current-price">
+            <strong id="currentPrice">-</strong>
+            <span>IDR</span>
+          </div>
+        </div>
+        <div class="ticker-meta">
+          <div class="ticker-pill buy">Bid <strong id="tickerBuy">-</strong></div>
+          <div class="ticker-pill sell">Ask <strong id="tickerSell">-</strong></div>
+          <div class="ticker-pill">Update <strong id="tickerTime">-</strong></div>
+        </div>
+      </div>
+      <div class="ticker-grid">
+        <div class="ticker-stat">
+          <span>High 24j</span>
+          <strong id="tickerHigh">-</strong>
+        </div>
+        <div class="ticker-stat">
+          <span>Low 24j</span>
+          <strong id="tickerLow">-</strong>
+        </div>
+        <div class="ticker-stat">
+          <span>Volume HART</span>
+          <strong id="tickerHartVol">-</strong>
+        </div>
+        <div class="ticker-stat">
+          <span>Volume IDR</span>
+          <strong id="tickerIdrVol">-</strong>
+        </div>
+        <div class="market-bars" aria-hidden="true">
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+        </div>
+      </div>
     </section>
 
     <div id="error" class="error"></div>
@@ -492,12 +729,16 @@
   <script>
     const API_LABEL = 'https://indodax.com/api/orderbook/hartidr';
     const CORS_PROXY_ENDPOINT = 'https://api.codetabs.com/v1/proxy/?quest=' + API_LABEL;
+    const TICKER_LABEL = 'https://indodax.com/api/ticker/hartidr';
+    const TICKER_PROXY_ENDPOINT = 'https://api.codetabs.com/v1/proxy/?quest=' + TICKER_LABEL;
     const WS_ENDPOINT = 'wss://ws3.indodax.com/ws/';
     const WS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE5NDY2MTg0MTV9.UR1lBM6Eqh0yWz-PVirw1uPCxe60FdchR8eNVdsskeo';
     const WS_CHANNEL = 'market:order-book-hartidr';
     const MIN_LOADING_MS = 1200;
     const REQUEST_TIMEOUT_MS = 9000;
     let liveSocket = null;
+    let previousPrice = null;
+    let hasTickerData = false;
 
     const els = {
       loading: document.querySelector('#loading'),
@@ -506,6 +747,16 @@
       updatedAt: document.querySelector('#updatedAt'),
       sourceMode: document.querySelector('#sourceMode'),
       sourceUrl: document.querySelector('#sourceUrl'),
+      tickerCard: document.querySelector('#tickerCard'),
+      currentPriceWrap: document.querySelector('#currentPriceWrap'),
+      currentPrice: document.querySelector('#currentPrice'),
+      tickerBuy: document.querySelector('#tickerBuy'),
+      tickerSell: document.querySelector('#tickerSell'),
+      tickerTime: document.querySelector('#tickerTime'),
+      tickerHigh: document.querySelector('#tickerHigh'),
+      tickerLow: document.querySelector('#tickerLow'),
+      tickerHartVol: document.querySelector('#tickerHartVol'),
+      tickerIdrVol: document.querySelector('#tickerIdrVol'),
       totalAskIdr: document.querySelector('#totalAskIdr'),
       totalBidIdr: document.querySelector('#totalBidIdr'),
       totalAskHart: document.querySelector('#totalAskHart'),
@@ -649,6 +900,64 @@
       }).join('');
     }
 
+    function animatePrice(nextPrice) {
+      if (!Number.isFinite(nextPrice) || nextPrice <= 0) return;
+
+      els.currentPriceWrap.classList.remove('price-up', 'price-down');
+      if (previousPrice !== null && nextPrice !== previousPrice) {
+        els.currentPriceWrap.classList.add(nextPrice > previousPrice ? 'price-up' : 'price-down');
+      }
+
+      previousPrice = nextPrice;
+      els.tickerCard.classList.remove('is-updating');
+      window.requestAnimationFrame(() => {
+        els.tickerCard.classList.add('is-updating');
+      });
+    }
+
+    function fallbackTickerFromBook(market) {
+      if (!market || !market.bestAsk || !market.bestBid) return null;
+
+      return {
+        ticker: {
+          last: String(Math.round((market.bestAsk + market.bestBid) / 2)),
+          buy: String(market.bestBid),
+          sell: String(market.bestAsk),
+          high: String(market.bestAsk),
+          low: String(market.bestBid),
+          vol_hart: '0',
+          vol_idr: '0',
+          server_time: Math.floor(Date.now() / 1000),
+          estimated: true
+        }
+      };
+    }
+
+    function renderTicker(payload, market) {
+      const ticker = payload && payload.ticker ? payload.ticker : fallbackTickerFromBook(market);
+      if (!ticker) return;
+
+      const last = toNumber(ticker.last);
+      hasTickerData = !ticker.estimated;
+
+      els.currentPrice.textContent = fmtPrice(last);
+      els.tickerBuy.textContent = fmtPrice(ticker.buy);
+      els.tickerSell.textContent = fmtPrice(ticker.sell);
+      els.tickerHigh.textContent = fmtPrice(ticker.high);
+      els.tickerLow.textContent = fmtPrice(ticker.low);
+      els.tickerHartVol.textContent = ticker.estimated ? '-' : fmtHart(ticker.vol_hart);
+      els.tickerIdrVol.textContent = ticker.estimated ? '-' : fmtIdr(toBigInt(ticker.vol_idr));
+
+      const time = ticker.server_time
+        ? new Date(Number(ticker.server_time) * 1000)
+        : new Date();
+      els.tickerTime.textContent = ticker.estimated
+        ? 'Estimasi'
+        : time.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      animatePrice(last);
+    }
+
     function normalizePayload(payload) {
       if (payload && payload.code === 200 && payload.success && payload.data) {
         return payload;
@@ -736,6 +1045,13 @@
         dateStyle: 'medium',
         timeStyle: 'medium'
       });
+
+      return {
+        bestAsk,
+        bestBid,
+        askRows,
+        bidRows
+      };
     }
 
     async function fetchJson(url) {
@@ -770,6 +1086,18 @@
         } catch (proxyError) {
           setSource('Sumber data live: WebSocket resmi Indodax', WS_CHANNEL);
           return connectWebSocketOrderBook();
+        }
+      }
+    }
+
+    async function fetchTicker() {
+      try {
+        return await fetchJson(TICKER_LABEL);
+      } catch (directError) {
+        try {
+          return await fetchJson(TICKER_PROXY_ENDPOINT);
+        } catch (proxyError) {
+          return null;
         }
       }
     }
@@ -825,7 +1153,8 @@
               window.clearTimeout(timer);
               resolve(message);
             } else {
-              render(message);
+              const market = render(message);
+              if (!hasTickerData) renderTicker(null, market);
             }
           }
         };
@@ -837,11 +1166,13 @@
       setLoading(true);
 
       try {
-        const [payload] = await Promise.all([
+        const [payload, tickerPayload] = await Promise.all([
           fetchOrderBook(),
+          fetchTicker(),
           sleep(MIN_LOADING_MS)
         ]);
-        render(payload);
+        const market = render(payload);
+        renderTicker(tickerPayload, market);
       } catch (error) {
         showError(error.message || 'Gagal memuat data order book.');
       } finally {
